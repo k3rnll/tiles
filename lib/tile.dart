@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:tiles/game.dart';
+
+import 'game.dart';
 
 enum OpenedTileCase {
   allowed,
@@ -9,19 +10,20 @@ enum OpenedTileCase {
   right,
 }
 
-class Tile extends PositionComponent with TapCallbacks {
-  int index;
+class Tile extends PositionComponent with HasGameRef<TileGame>, TapCallbacks {
+  final int index;
+  final double sideWidth;
+  late final Sprite openedSprite;
+  late final Sprite closedSprite;
+  double rightPause = 0;
+  double mistakePause = 0;
   bool isOpen = true;
-  // bool isMistake = false;
+  bool isMistake = false;
   OpenedTileCase openedCase = OpenedTileCase.allowed;
-  double sideWidth;
-  late Sprite openedSprite;
-  late Sprite closedSprite;
-  late List<Tile> stack;
 
-  Tile({required this.index, required this.sideWidth, required this.stack}) {
-    openedSprite = tileSprite(index);
-    closedSprite = tileSprite(0);
+  Tile({required this.index, required this.sideWidth}) {
+    openedSprite = getTileSprite(index);
+    closedSprite = getTileSprite(0);
   }
 
   @override
@@ -33,9 +35,30 @@ class Tile extends PositionComponent with TapCallbacks {
 
   @override
   void onTapDown(TapDownEvent event) {
-    if (!isOpen && stack.length < 2) {
+    if (!isOpen && game.matchStack.length < 2) {
       isOpen = true;
-      stack.add(this);
+      game.matchStack.add(this);
+    }
+  }
+
+  @override
+  void update(double dt) {
+    rightPause = rightPause > 0 ? rightPause -= dt : 0;
+    mistakePause = mistakePause > 0 ? mistakePause -= dt : 0;
+    if (rightPause == 0 && mistakePause == 0) {
+      if (!isMistake) {
+        openedCase = OpenedTileCase.allowed;
+      } else {
+        isOpen = false;
+        isMistake = false;
+        game.matchStack.clear();
+      }
+    }
+    if (mistakePause > 0) {
+      openedCase = OpenedTileCase.mistake;
+    }
+    if (rightPause > 0) {
+      openedCase = OpenedTileCase.right;
     }
   }
 

@@ -1,22 +1,8 @@
-/*
-
-класс для кнопок
-
-перезапустить игру
-поменять размер сетки
-показывать обратный таймер при learningPause
-
-вид просто полоской как апбар сверху или снизу
-три поля
-
-
- */
-
 import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:tiles/game.dart';
+
+import 'game.dart';
 
 class Hud extends PositionComponent with HasGameRef<TileGame> {
 
@@ -25,9 +11,8 @@ class Hud extends PositionComponent with HasGameRef<TileGame> {
     super.size = Vector2((game.size.x - 1), 50);
     super.position = (Vector2(0, game.cam.viewport.size.y));
     super.anchor = Anchor.topLeft;
-
     add(RestartButton());
-    add(CountDown());
+    add(PauseCountDown());
     add(GridSizeButtonMinus());
     add(GridSize());
     add(GridSizeButtonPlus());
@@ -38,7 +23,7 @@ class Hud extends PositionComponent with HasGameRef<TileGame> {
   bool get debugMode => false;
 }
 
-class CountDown extends TextComponent with HasGameRef<TileGame> {
+class PauseCountDown extends TextComponent with HasGameRef<TileGame> {
   @override
   Future<void>? onLoad() async {
     super.position = Vector2(game.size.x / 2, 25);
@@ -71,7 +56,6 @@ class RestartButton extends TextComponent with HasGameRef<TileGame>, TapCallback
   @override
   void onTapDown(TapDownEvent event) {
     game.startNewGame();
-    print("new game button");
   }
   @override
   bool get debugMode => false;
@@ -93,7 +77,6 @@ class GridSizeButtonPlus extends PositionComponent with HasGameRef<TileGame>, Ta
   @override
   void onTapDown(TapDownEvent event) {
     game.incrementGridSize();
-    print("grid plus button");
   }
   @override
   bool get debugMode => false;
@@ -109,7 +92,7 @@ class GridSize extends TextComponent with HasGameRef<TileGame> {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    super.text = "${game.getNewGridSize()}";
+    super.text = "${game.calculateNewGridSize()}";
   }
   @override
   bool get debugMode => false;
@@ -124,16 +107,16 @@ class GridSizeButtonMinus extends PositionComponent with HasGameRef<TileGame>, T
     add(TextComponent(text: "-", position: Vector2(game.size.x / 8, 20), anchor: Anchor.centerLeft));
     return super.onLoad();
   }
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-  }
+  // @override
+  // void render(Canvas canvas) {
+  //   super.render(canvas);
+  // }
 
   @override
   void onTapDown(TapDownEvent event) {
     game.decrementGridSize();
-    print("grid button");
   }
+
   @override
   bool get debugMode => false;
 }
