@@ -5,7 +5,6 @@ import 'package:flame/events.dart';
 import 'game.dart';
 
 class Hud extends PositionComponent with HasGameRef<TileGame> {
-
   @override
   Future<void>? onLoad() async {
     super.size = Vector2((game.size.x - 1), 50);
@@ -18,9 +17,6 @@ class Hud extends PositionComponent with HasGameRef<TileGame> {
     add(GridSizeButtonPlus());
     return super.onLoad();
   }
-
-  @override
-  bool get debugMode => false;
 }
 
 class PauseCountDown extends TextComponent with HasGameRef<TileGame> {
@@ -31,13 +27,12 @@ class PauseCountDown extends TextComponent with HasGameRef<TileGame> {
     super.text = "${game.timeToRememberSeconds ~/ 1}";
     return super.onLoad();
   }
+
   @override
   void render(Canvas canvas) {
     super.render(canvas);
     super.text = game.isGameRunning ? "" : "${game.timeToRememberSeconds ~/ 1}";
   }
-  @override
-  bool get debugMode => false;
 }
 
 class RestartButton extends TextComponent with HasGameRef<TileGame>, TapCallbacks {
@@ -48,17 +43,11 @@ class RestartButton extends TextComponent with HasGameRef<TileGame>, TapCallback
     super.text = "new game";
     return super.onLoad();
   }
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-  }
 
   @override
   void onTapDown(TapDownEvent event) {
     game.startNewGame();
   }
-  @override
-  bool get debugMode => false;
 }
 
 class GridSizeButtonPlus extends PositionComponent with HasGameRef<TileGame>, TapCallbacks {
@@ -70,16 +59,11 @@ class GridSizeButtonPlus extends PositionComponent with HasGameRef<TileGame>, Ta
     add(TextComponent(text: "+", position: Vector2(game.size.x / 8, 20), anchor: Anchor.centerRight));
     return super.onLoad();
   }
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-  }
+
   @override
   void onTapDown(TapDownEvent event) {
     game.incrementGridSize();
   }
-  @override
-  bool get debugMode => false;
 }
 
 class GridSize extends TextComponent with HasGameRef<TileGame> {
@@ -94,8 +78,6 @@ class GridSize extends TextComponent with HasGameRef<TileGame> {
     super.render(canvas);
     super.text = "${game.calculateNewGridSize()}";
   }
-  @override
-  bool get debugMode => false;
 }
 
 class GridSizeButtonMinus extends PositionComponent with HasGameRef<TileGame>, TapCallbacks {
@@ -107,16 +89,9 @@ class GridSizeButtonMinus extends PositionComponent with HasGameRef<TileGame>, T
     add(TextComponent(text: "-", position: Vector2(game.size.x / 8, 20), anchor: Anchor.centerLeft));
     return super.onLoad();
   }
-  // @override
-  // void render(Canvas canvas) {
-  //   super.render(canvas);
-  // }
 
   @override
   void onTapDown(TapDownEvent event) {
     game.decrementGridSize();
   }
-
-  @override
-  bool get debugMode => false;
 }
